@@ -1,5 +1,6 @@
 package com.mtekinn.assetdesk.asset;
 
+import com.mtekinn.assetdesk.asset.dto.AssetResponse;
 import com.mtekinn.assetdesk.asset.dto.CreateAssetRequest;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,14 @@ public class AssetService {
         this.assetRepository = assetRepository;
     }
 
-    public List<Asset> getAllAssets() {
-        return assetRepository.findAll();
+    public List<AssetResponse> getAllAssets() {
+        return assetRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
-    public Asset createAsset(CreateAssetRequest request) {
+    public AssetResponse createAsset(CreateAssetRequest request) {
         Asset asset = new Asset();
         asset.setAssetCode(request.getAssetCode());
         asset.setName(request.getName());
@@ -28,6 +32,21 @@ public class AssetService {
         asset.setSerialNumber(request.getSerialNumber());
         asset.setStatus(request.getStatus());
 
-        return assetRepository.save(asset);
+        Asset savedAsset = assetRepository.save(asset);
+        return mapToResponse(savedAsset);
+    }
+
+    private AssetResponse mapToResponse(Asset asset) {
+        AssetResponse response = new AssetResponse();
+        response.setId(asset.getId());
+        response.setAssetCode(asset.getAssetCode());
+        response.setName(asset.getName());
+        response.setAssetType(asset.getAssetType());
+        response.setBrand(asset.getBrand());
+        response.setModel(asset.getModel());
+        response.setSerialNumber(asset.getSerialNumber());
+        response.setStatus(asset.getStatus());
+
+        return response;
     }
 }

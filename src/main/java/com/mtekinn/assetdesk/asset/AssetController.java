@@ -1,5 +1,6 @@
 package com.mtekinn.assetdesk.asset;
 
+import com.mtekinn.assetdesk.asset.dto.AssetResponse;
 import com.mtekinn.assetdesk.asset.dto.CreateAssetRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +17,12 @@ public class AssetController {
     }
 
     @GetMapping
-    public List<Asset> getAllAssets() {
+    public List<AssetResponse> getAllAssets() {
         return assetService.getAllAssets();
     }
 
     @PostMapping
-    public Asset createAsset(@RequestBody CreateAssetRequest request) {
+    public AssetResponse createAsset(@RequestBody CreateAssetRequest request) {
         return assetService.createAsset(request);
     }
 }
