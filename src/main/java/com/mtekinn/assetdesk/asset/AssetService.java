@@ -61,6 +61,13 @@ public class AssetService {
         return mapToResponse(updatedAsset);
     }
 
+    public void deleteAsset(Long id) {
+        Asset asset = assetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found with id: " + id));
+
+        assetRepository.delete(asset);
+    }
+
     private AssetResponse mapToResponse(Asset asset) {
         AssetResponse response = new AssetResponse();
         response.setId(asset.getId());

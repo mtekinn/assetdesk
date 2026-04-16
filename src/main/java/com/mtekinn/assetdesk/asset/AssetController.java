@@ -3,6 +3,7 @@ package com.mtekinn.assetdesk.asset;
 import com.mtekinn.assetdesk.asset.dto.AssetResponse;
 import com.mtekinn.assetdesk.asset.dto.CreateAssetRequest;
 import com.mtekinn.assetdesk.asset.dto.UpdateAssetRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -37,5 +38,11 @@ public class AssetController {
     public AssetResponse updateAsset(@PathVariable Long id,
                                      @Valid @RequestBody UpdateAssetRequest request) {
         return assetService.updateAsset(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAsset(@PathVariable Long id) {
+        assetService.deleteAsset(id);
     }
 }
