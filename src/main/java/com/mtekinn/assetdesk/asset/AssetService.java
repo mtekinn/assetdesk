@@ -3,6 +3,7 @@ package com.mtekinn.assetdesk.asset;
 import com.mtekinn.assetdesk.asset.dto.AssetResponse;
 import com.mtekinn.assetdesk.asset.dto.CreateAssetRequest;
 import org.springframework.stereotype.Service;
+import com.mtekinn.assetdesk.common.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class AssetService {
 
     public AssetResponse getAssetById(Long id) {
         Asset asset = assetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Asset not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found with id: " + id));
 
         return mapToResponse(asset);
     }
