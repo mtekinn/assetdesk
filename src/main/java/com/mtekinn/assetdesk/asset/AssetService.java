@@ -22,6 +22,13 @@ public class AssetService {
                 .toList();
     }
 
+    public AssetResponse getAssetById(Long id) {
+        Asset asset = assetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Asset not found with id: " + id));
+
+        return mapToResponse(asset);
+    }
+
     public AssetResponse createAsset(CreateAssetRequest request) {
         Asset asset = new Asset();
         asset.setAssetCode(request.getAssetCode());

@@ -22,6 +22,11 @@ public class AssetController {
         return assetService.getAllAssets();
     }
 
+    @GetMapping("/{id}")
+    public AssetResponse getAssetById(@PathVariable Long id) {
+        return assetService.getAssetById(id);
+    }
+
     @PostMapping
     public AssetResponse createAsset(@Valid @RequestBody CreateAssetRequest request) {
         return assetService.createAsset(request);
