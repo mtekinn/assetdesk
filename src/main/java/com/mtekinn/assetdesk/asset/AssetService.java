@@ -45,6 +45,13 @@ public class AssetService {
         return mapToResponse(asset);
     }
 
+    public List<AssetResponse> getAssetsByStatus(AssetStatus status) {
+        return assetRepository.findByStatus(status)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     public AssetResponse createAsset(CreateAssetRequest request) {
         validateUniqueFields(request.getAssetCode(), request.getSerialNumber());
 

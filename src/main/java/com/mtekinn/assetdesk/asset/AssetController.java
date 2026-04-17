@@ -5,6 +5,7 @@ import com.mtekinn.assetdesk.asset.dto.CreateAssetRequest;
 import com.mtekinn.assetdesk.asset.dto.UpdateAssetRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -19,11 +20,6 @@ public class AssetController {
         this.assetService = assetService;
     }
 
-    @GetMapping
-    public List<AssetResponse> getAllAssets() {
-        return assetService.getAllAssets();
-    }
-
     @GetMapping("/{id}")
     public AssetResponse getAssetById(@PathVariable Long id) {
         return assetService.getAssetById(id);
@@ -32,6 +28,15 @@ public class AssetController {
     @PostMapping
     public AssetResponse createAsset(@Valid @RequestBody CreateAssetRequest request) {
         return assetService.createAsset(request);
+    }
+
+    @GetMapping
+    public List<AssetResponse> getAssets(@RequestParam(required = false) AssetStatus status) {
+        if (status != null) {
+            return assetService.getAssetsByStatus(status);
+        }
+
+        return assetService.getAllAssets();
     }
 
     @PutMapping("/{id}")
