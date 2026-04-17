@@ -5,6 +5,7 @@ import com.mtekinn.assetdesk.asset.dto.CreateAssetRequest;
 import com.mtekinn.assetdesk.asset.dto.UpdateAssetRequest;
 import org.springframework.stereotype.Service;
 import com.mtekinn.assetdesk.common.exception.ResourceNotFoundException;
+import com.mtekinn.assetdesk.common.exception.ConflictException;
 
 import java.util.List;
 
@@ -15,6 +16,19 @@ public class AssetService {
 
     public AssetService(AssetRepository assetRepository) {
         this.assetRepository = assetRepository;
+    }
+
+
+    private void validateUniqueFields(String assetCode, String serialNumber) {
+        if (assetRepository.existsByAssetCode(assetCode)) {
+            throw new ConflictException("Asset code already exists: " + assetCode);
+        }
+
+        if (serialNumber != null
+                && !serialNumber.isBlank()
+                && assetRepository.existsBySerialNumber(serialNumber)) {
+            throw new ConflictException("Serial number already exists: " + serialNumber);
+        }
     }
 
     public List<AssetResponse> getAllAssets() {
@@ -32,6 +46,8 @@ public class AssetService {
     }
 
     public AssetResponse createAsset(CreateAssetRequest request) {
+        validateUniqueFields(request.getAssetCode(), request.getSerialNumber());
+
         Asset asset = new Asset();
         asset.setAssetCode(request.getAssetCode());
         asset.setName(request.getName());
@@ -48,6 +64,18 @@ public class AssetService {
     public AssetResponse updateAsset(Long id, UpdateAssetRequest request) {
         Asset asset = assetRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found with id: " + id));
+
+        if (!asset.getAssetCode().equals(request.getAssetCode())
+                && assetRepository.existsByAssetCode(request.getAssetCode())) {
+            throw new ConflictException("Asset code already exists: " + request.getAssetCode());
+        }
+
+        if (request.getSerialNumber() != null
+                && !request.getSerialNumber().isBlank()
+                && !request.getSerialNumber().equals(asset.getSerialNumber())
+                && assetRepository.existsBySerialNumber(request.getSerialNumber())) {
+            throw new ConflictException("Serial number already exists: " + request.getSerialNumber());
+        }
 
         asset.setAssetCode(request.getAssetCode());
         asset.setName(request.getName());

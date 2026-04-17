@@ -10,16 +10,16 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleResourceNotFoundException(
-            ResourceNotFoundException ex) {
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiErrorResponse> handleConflictException(
+            ConflictException ex) {
 
         ApiErrorResponse response = new ApiErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.CONFLICT.value(),
                 ex.getMessage()
         );
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }
