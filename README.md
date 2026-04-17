@@ -18,7 +18,6 @@ Bu proje; dağınık Excel dosyaları, sözlü takip ve manuel zimmet süreçler
 - [Örnek Kullanım Akışı](#örnek-kullanım-akışı)
 - [Kurulum ve Çalıştırma](#kurulum-ve-çalıştırma)
 - [Örnek Endpointler](#örnek-endpointler)
-- [Gelecek Geliştirmeler](#gelecek-geliştirmeler)
 
 ---
 
