@@ -29,9 +29,28 @@ public class AssignmentService {
         this.userRepository = userRepository;
     }
 
-    public List<AssignmentResponse> getAllAssignments() {
+    public List<AssignmentResponse> getAssignments(Long userId, Long assetId, AssignmentFilterStatus status) {
+        if (userId != null && !userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with id: " + userId);
+        }
+
+        if (assetId != null && !assetRepository.existsById(assetId)) {
+            throw new ResourceNotFoundException("Asset not found with id: " + assetId);
+        }
+
         return assignmentRepository.findAll()
                 .stream()
+                .filter(assignment -> userId == null || assignment.getUser().getId().equals(userId))
+                .filter(assignment -> assetId == null || assignment.getAsset().getId().equals(assetId))
+                .filter(assignment -> {
+                    if (status == null) {
+                        return true;
+                    }
+                    return switch (status) {
+                        case ACTIVE -> assignment.getReturnedAt() == null;
+                        case RETURNED -> assignment.getReturnedAt() != null;
+                    };
+                })
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -69,6 +88,25 @@ public class AssignmentService {
         return mapToResponse(savedAssignment);
     }
 
+    public AssignmentResponse returnAssignment(Long id) {
+        AssetAssignment assignment = assignmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found with id: " + id));
+
+        if (assignment.getReturnedAt() != null) {
+            throw new ConflictException("Assignment is already returned with id: " + id);
+        }
+
+        assignment.setReturnedAt(LocalDateTime.now());
+
+        Asset asset = assignment.getAsset();
+        asset.setStatus(AssetStatus.IN_STOCK);
+
+        AssetAssignment updatedAssignment = assignmentRepository.save(assignment);
+        assetRepository.save(asset);
+
+        return mapToResponse(updatedAssignment);
+    }
+
     private AssignmentResponse mapToResponse(AssetAssignment assignment) {
         AssignmentResponse response = new AssignmentResponse();
         response.setId(assignment.getId());
@@ -79,7 +117,6 @@ public class AssignmentService {
         response.setAssignedAt(assignment.getAssignedAt());
         response.setReturnedAt(assignment.getReturnedAt());
         response.setNote(assignment.getNote());
-
         return response;
     }
 }

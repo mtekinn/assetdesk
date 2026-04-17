@@ -13,4 +13,8 @@ public interface AssignmentRepository extends JpaRepository<AssetAssignment, Lon
     List<AssetAssignment> findByUserId(Long userId);
 
     List<AssetAssignment> findByAssetId(Long assetId);
+
+    List<AssetAssignment> findByReturnedAtIsNull();
+
+    List<AssetAssignment> findByUserIdAndReturnedAtIsNull(Long userId);
 }
